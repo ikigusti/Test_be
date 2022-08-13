@@ -44,7 +44,6 @@ class ProductController extends Controller
             'price' => 'required',
             'quantity' => 'required',
             'nama_game' => 'required',
-            'gambar' => 'required|image|max:2048',
         ]);
 
         $produk = new Product();
@@ -68,7 +67,8 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        $produck = Product::findOrFail($id);
+        return view('product.show', compact('produck'));
     }
 
     /**
@@ -79,7 +79,8 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        $produck = Product::findOrFail($id);
+        return view('product.edit', compact('produck'));
     }
 
     /**
@@ -91,7 +92,27 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+
+            'uuid' => 'required|unique:products',
+            'name' => 'required',
+            'type' => 'required',
+            'price' => 'required',
+            'quantity' => 'required',
+            'nama_game' => 'required',
+        ]);
+
+        $produk = new Product();
+        $produk->uuid = $request->uuid;
+        $produk->name = $request->name;
+
+        $produk->type = $request->type;
+        $produk->price = $request->price;
+        $produk->quantity = $request->quantity;
+        $produk->nama_game = $request->nama_game;
+        $produk->save();
+        return redirect()->route('produk.index')
+            ->with('success', 'Data berhasil diedit!');
     }
 
     /**
@@ -102,6 +123,9 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $produk = Produk::findOrFail($id);
+        $produk->delete();
+        return redirect()->route('produk.index')
+            ->with('success', 'Data berhasil dihapus!');
     }
 }
